@@ -8,7 +8,7 @@
 #!pip install pillow
 
 
-# In[422]:
+# In[2]:
 
 
 from instauto.api.client import ApiClient
@@ -20,15 +20,22 @@ from PIL import Image
 from PIL import Image
 from PIL import ImageFont
 from PIL import ImageDraw 
+import os
 
 
-# In[452]:
+# In[6]:
 
 
 #fetch credentials
 creds={}
-with open('credentials.json',encoding='utf-8') as json_file:
-    creds = json.load(json_file)
+
+
+if(os.path.isfile('credentials.json') ):
+    with open('credentials.json',encoding='utf-8') as json_file:
+        creds = json.load(json_file)
+else:
+    creds['username'] = os.getenv('username')
+    creds['password'] = os.getenv('password')
 
 
 # In[424]:
@@ -190,4 +197,20 @@ resp = client.post_post(post, 80)
 print("Success: ", resp.ok)
 
 
+# In[399]:
+
+
+
+
+
+# In[405]:
+
+
+
+
+
+# In[451]:
+
+
+data
 
