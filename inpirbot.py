@@ -1,0 +1,193 @@
+#!/usr/bin/env python
+# coding: utf-8
+
+# In[5]:
+
+
+#!pip install instauto
+#!pip install pillow
+
+
+# In[422]:
+
+
+from instauto.api.client import ApiClient
+from instauto.api.actions import post as ps
+import json
+import requests
+
+from PIL import Image
+from PIL import Image
+from PIL import ImageFont
+from PIL import ImageDraw 
+
+
+# In[452]:
+
+
+#fetch credentials
+creds={}
+with open('credentials.json',encoding='utf-8') as json_file:
+    creds = json.load(json_file)
+
+
+# In[424]:
+
+
+#grab quote from the web quote api
+
+
+
+#GET "https://quotes.rest/qod?language=en" -H "accept: application/xml"
+
+response = requests.get(
+    'https://quotes.rest/qod?language=en',
+    #params={'q': 'requests+language:python'},
+    headers={'Accept': 'application/json'},
+)
+
+data = response.json()
+quote= data['contents']['quotes'][0]
+
+
+# In[446]:
+
+
+W, H = (1080,1080)
+    
+img = Image.new('RGB', (W, H), color = 'black')
+
+draw = ImageDraw.Draw(img)
+
+
+font = ImageFont.truetype("./Roboto-MediumItalic.ttf", 80)
+
+#text splitting function, adds space for  long strings
+text = quote['quote']
+
+
+
+# In[447]:
+
+
+import math
+
+
+
+def AddNewLines(text,font,imgW=1080):
+
+    outputtext=text
+    w, h = draw.textsize(outputtext, font=font)
+    numberoflines = math.ceil(w/imgW)
+    print(numberoflines)
+
+    for i in range(1,numberoflines):
+        print("Space", i)
+
+        startat= int(len(outputtext)*(i/numberoflines))
+        print(startat)
+
+        if(text[startat]!=' '):    
+            for j in range(1,20):
+
+                if text[startat+j]==' ':
+                    startat=startat+j
+                    print("BREAK1")
+                    break
+                elif text[startat-j]==' ':
+                    startat=startat-j
+                    print("BREAK2")
+                    break
+        print(text[startat])
+
+        outputtext = outputtext[0:startat]+"\n"+outputtext[startat+1:len(outputtext)]
+
+    w, h = draw.textsize(outputtext, font=font)
+
+
+    print(w,h)
+
+    return outputtext
+
+
+
+text=AddNewLines(text,font,imgW=1080)
+
+w, h = draw.textsize(text, font=font)
+
+draw.text(((W - w) / 2, (H - h) / 2),text,(255,255,255),font=font,align="center")
+
+
+#add author text
+font = ImageFont.truetype("./Roboto-Medium.ttf", 60)
+authortext ="~"+quote['author']
+w, h = draw.textsize(authortext, font=font)
+
+
+# In[448]:
+
+
+
+draw.text((W-100-w, H-h-100),authortext,(255,255,255),font=font)
+im1 = img.resize((480,480)) 
+# Shows the image in image viewer 
+
+import datetime
+
+
+#img.save("post_")
+
+
+#generate story
+W, H = (1080,1920)
+    
+imgStory = Image.new('RGB', (W, H), color = 'black')
+
+drawStory = ImageDraw.Draw(img)
+
+
+offset = (0, (1920 - 1080) // 2)
+imgStory.paste(img, offset)
+
+
+name = "./Posts/post.jpg"# + datetime.datetime.now().strftime('%y-%m-%d %H_%M_%S')+".jpg"
+storyname = "./Posts/story.jpg"
+
+img.save(name)
+imgStory.save(storyname)
+
+
+# In[453]:
+
+
+tagstring=""
+
+#fetch tags
+for t in quote['tags']:
+    tagstring=tagstring+"#"+t+" "
+    
+caption = quote['quote']+"\n~"+quote['author'] + "\n\n"+tagstring
+
+
+client = ApiClient(user_name=creds["username"], password= creds["password"])
+client.login()
+
+post = ps.PostFeed(
+    path=name,
+    caption=caption
+)
+resp = client.post_post(post, 80)
+print("Success: ", resp.ok)
+
+
+# In[454]:
+
+
+post = ps.PostStory(
+    path=storyname,
+)
+resp = client.post_post(post, 80)
+print("Success: ", resp.ok)
+
+
+
