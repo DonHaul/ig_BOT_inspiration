@@ -37,6 +37,10 @@ else:
     creds['username'] = os.getenv('username')
     creds['password'] = os.getenv('password')
 
+    
+
+print(creds)
+
 
 # In[424]:
 
