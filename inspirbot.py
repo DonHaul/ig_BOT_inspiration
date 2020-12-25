@@ -67,7 +67,7 @@ img = Image.new('RGB', (W, H), color = 'black')
 draw = ImageDraw.Draw(img)
 
 
-font = ImageFont.truetype("./Roboto-MediumItalic.ttf", 80)
+font = ImageFont.truetype("./Fonts/Roboto-MediumItalic.ttf", 80)
 
 #text splitting function, adds space for  long strings
 text = quote['quote']
@@ -126,7 +126,7 @@ draw.text(((W - w) / 2, (H - h) / 2),text,(255,255,255),font=font,align="center"
 
 
 #add author text
-font = ImageFont.truetype("./Roboto-Medium.ttf", 60)
+font = ImageFont.truetype("./Fonts/Roboto-Medium.ttf", 60)
 authortext ="~"+quote['author']
 w, h = draw.textsize(authortext, font=font)
 
