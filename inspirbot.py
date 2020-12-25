@@ -8,7 +8,7 @@
 #!pip install pillow
 
 
-# In[2]:
+# In[4]:
 
 
 from instauto.api.client import ApiClient
@@ -23,7 +23,7 @@ from PIL import ImageDraw
 import os
 
 
-# In[6]:
+# In[11]:
 
 
 #fetch credentials
@@ -168,7 +168,7 @@ img.save(name)
 imgStory.save(storyname)
 
 
-# In[453]:
+# In[ ]:
 
 
 tagstring=""
@@ -180,8 +180,39 @@ for t in quote['tags']:
 caption = quote['quote']+"\n~"+quote['author'] + "\n\n"+tagstring
 
 
-client = ApiClient(user_name=creds["username"], password= creds["password"])
-client.login()
+# In[13]:
+
+
+
+
+
+if os.path.isfile('./instauto.save'):
+    client = ApiClient.initiate_from_file('./instauto.save')
+else:
+    client = ApiClient(user_name=creds["username"], password= creds["password"])
+    client.login()
+    client.save_to_disk('./instauto.save')
+
+    # get user info by username
+    #i_uname = Info(username="")
+    #info_username = client.profile_info(i_uname)
+    #print(info_username)
+
+    # get user info by user id
+    #i_id = Info(user_id="")
+    #info_id = client.profile_info(i_id)
+    #print(info_id)
+
+
+# In[12]:
+
+
+creds
+
+
+# In[454]:
+
+
 
 post = ps.PostFeed(
     path=name,
@@ -189,10 +220,6 @@ post = ps.PostFeed(
 )
 resp = client.post_post(post, 80)
 print("Success: ", resp.ok)
-
-
-# In[454]:
-
 
 post = ps.PostStory(
     path=storyname,
