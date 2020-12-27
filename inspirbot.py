@@ -8,7 +8,7 @@
 #!pip install pillow
 
 
-# In[4]:
+# In[14]:
 
 
 from instauto.api.client import ApiClient
@@ -23,7 +23,7 @@ from PIL import ImageDraw
 import os
 
 
-# In[11]:
+# In[15]:
 
 
 #fetch credentials
@@ -42,7 +42,7 @@ else:
 print(creds)
 
 
-# In[424]:
+# In[16]:
 
 
 #grab quote from the web quote api
@@ -61,7 +61,7 @@ data = response.json()
 quote= data['contents']['quotes'][0]
 
 
-# In[446]:
+# In[51]:
 
 
 W, H = (1080,1080)
@@ -78,18 +78,18 @@ text = quote['quote']
 
 
 
-# In[447]:
+# In[52]:
 
 
 import math
 
 
 
-def AddNewLines(text,font,imgW=1080):
+def AddNewLines(text,font,imgW=1080,resetSize=80):
 
     outputtext=text
     w, h = draw.textsize(outputtext, font=font)
-    numberoflines = math.ceil(w/imgW)
+    numberoflines = math.ceil(w/(imgW-100))
     print(numberoflines)
 
     for i in range(1,numberoflines):
@@ -117,12 +117,23 @@ def AddNewLines(text,font,imgW=1080):
 
 
     print(w,h)
+                              
+    while(w>1000):
+          resetSize=resetSize-5
+          font = ImageFont.truetype("./Fonts/Roboto-MediumItalic.ttf", resetSize)
+                              
+          w, h = draw.textsize(outputtext, font=font)
+                              
+                              
+                              
+    
+    return outputtext,resetSize
 
-    return outputtext
 
 
+text,fontsz=AddNewLines(text,font,imgW=1080)
 
-text=AddNewLines(text,font,imgW=1080)
+font= ImageFont.truetype("./Fonts/Roboto-Medium.ttf", fontsz)
 
 w, h = draw.textsize(text, font=font)
 
@@ -135,7 +146,13 @@ authortext ="~"+quote['author']
 w, h = draw.textsize(authortext, font=font)
 
 
-# In[448]:
+# In[41]:
+
+
+fontsz
+
+
+# In[53]:
 
 
 
@@ -204,10 +221,10 @@ else:
     #print(info_id)
 
 
-# In[12]:
+# In[54]:
 
 
-creds
+img
 
 
 # In[454]:
